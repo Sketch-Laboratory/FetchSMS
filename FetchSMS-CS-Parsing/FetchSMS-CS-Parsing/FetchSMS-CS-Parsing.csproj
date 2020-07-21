@@ -44,5 +44,11 @@
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\ParseSMS\ParseSMS.csproj">
+      <Project>{f0e4dcb2-2f78-414e-bb47-929f807b57c6}</Project>
+      <Name>ParseSMS</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
