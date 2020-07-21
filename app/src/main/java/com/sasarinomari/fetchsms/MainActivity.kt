@@ -43,7 +43,8 @@ class MainActivity : AppCompatActivity() {
     @SuppressLint("SimpleDateFormat", "SetTextI18n")
     private fun writeToFile(array: String) {
         val df = SimpleDateFormat("yyyy-MM-dd HH-mm-ss")
-        val fileName = "SMS ${df.format(Date())}.json"
+//        val fileName = "SMS ${df.format(Date())}.json"
+        val fileName = "SMS.json"
         if (Environment.getExternalStorageState() == Environment.MEDIA_MOUNTED) {
             val dir = this.getExternalFilesDir(null)!!
             if(!dir.exists()) if(!dir.mkdirs()) {
