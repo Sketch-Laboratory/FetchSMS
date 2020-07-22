@@ -2,6 +2,7 @@ package com.sasarinomari.fetchsms
 
 import android.Manifest
 import android.annotation.SuppressLint
+import android.content.IntentFilter
 import android.net.Uri
 import android.os.Bundle
 import android.os.Environment
@@ -14,8 +15,6 @@ import java.io.File
 import java.io.FileWriter
 import java.io.IOException
 import java.text.SimpleDateFormat
-import java.util.*
-import kotlin.collections.ArrayList
 
 
 class MainActivity : AppCompatActivity() {
@@ -23,9 +22,24 @@ class MainActivity : AppCompatActivity() {
         private const val LOG_TAG = "MainActivity"
     }
 
-    val permissions = arrayOf(Manifest.permission.READ_SMS,
+    val permissions = arrayOf(
+        Manifest.permission.READ_SMS,
         Manifest.permission.WRITE_EXTERNAL_STORAGE,
-        Manifest.permission.READ_EXTERNAL_STORAGE)
+        Manifest.permission.READ_EXTERNAL_STORAGE
+    )
+
+
+    val receiver = RemoveBroadcastReceiver()
+
+    override fun onResume() {
+        super.onResume()
+        registerReceiver(receiver, IntentFilter(RemoveBroadcastReceiver.eventName))
+    }
+
+    override fun onPause() {
+        super.onPause()
+        unregisterReceiver(receiver)
+    }
 
     @SuppressLint("SetTextI18n")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -47,7 +61,7 @@ class MainActivity : AppCompatActivity() {
         val fileName = "SMS.json"
         if (Environment.getExternalStorageState() == Environment.MEDIA_MOUNTED) {
             val dir = this.getExternalFilesDir(null)!!
-            if(!dir.exists()) if(!dir.mkdirs()) {
+            if (!dir.exists()) if (!dir.mkdirs()) {
                 Log.i(LOG_TAG, "mkdirs Failed")
                 return
             }
@@ -78,7 +92,7 @@ class MainActivity : AppCompatActivity() {
 
     private fun listToJsonArray(list: ArrayList<JSONObject>): JSONArray {
         val result = JSONArray()
-        for(item in list) result.put(item)
+        for (item in list) result.put(item)
         Log.i(LOG_TAG, result.toString())
         return result
     }
@@ -86,8 +100,10 @@ class MainActivity : AppCompatActivity() {
     @SuppressLint("Recycle")
     private fun fetchSms(): ArrayList<JSONObject> {
         val results = ArrayList<JSONObject>()
-        val cursor = contentResolver.query(Uri.parse("content://sms/inbox"),
-            null, null, null, null)
+        val cursor = contentResolver.query(
+            Uri.parse("content://sms/inbox"),
+            null, null, null, null
+        )
 
         if (cursor!!.moveToFirst()) {
             // must check the result to prevent exception
